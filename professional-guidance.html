@@ -23,7 +23,23 @@
         <h2>Your Personalized Skincare Tips</h2>
         <p>After performing your skin analysis, here are some professional recommendations tailored to your skin condition.</p>
 
-        <div id="ai-suggestions"></div>
+        <div id="ai-suggestions">
+        </div>
+        <script>
+            window.addEventListener("DOMContentLoaded", () =>{
+                const imgURL = sessionStorage.getItem("userImage");
+                if(imgURL){
+                    const img = new Image();
+                    img.src = imgURL;
+                    img.width = 200;
+                    img.height = 200;
+  
+                    document.getElementById("ai-suggestions").appendChild(img);
+                } else {
+                    document.getElementById("ai-suggestions").textContent = "No image uploaded.";
+                }
+            });
+        </script>
     </section>
 
     <footer>

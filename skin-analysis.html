@@ -98,6 +98,8 @@
                 console.log("⚡ Running prediction...");
                 await predict(imgElement); // ✅ Pass image to prediction function
             };
+            
+
         }
 
   
@@ -186,6 +188,29 @@ async function predict(imageElement) {
         // Display the detected condition
         document.getElementById("label-container").innerHTML =
             `Detected Condition: <b>${condition}</b> (Confidence: ${confidence})`;
+
+        const buttonToGuidance = document.createElement("button");
+        const text = document.createElement("span");
+        text.textContent = "Professional Guidance";
+        buttonToGuidance.appendChild(text);
+        buttonToGuidance.addEventListener("click", () => {
+            window.location.href = "professional-guidance.html";  // replace with your actual URL
+        });
+
+        document.getElementById("ai-suggestions").appendChild(buttonToGuidance);
+
+        imageElement.onload = () => {
+                const canvas = document.createElement("canvas");
+                canvas.width = imageElement.naturalWidth;
+                canvas.height = imageElement.naturalHeight;
+                const context = canvas.getContext("2d");
+                context.drawImage(imageElement, 0, 0, imageElement.naturalWidth, imageElement.naturalHeight);
+                const imgURL = canvas.toDataURL();
+                sessionStorage.setItem("userImage", imgURL);
+        }
+        if (imageElement.complete) {
+            imageElement.onload(); // Manually trigger if the image is already loaded
+        }
 
     } catch (error) {
         console.error("❌ Prediction Error:", error);
