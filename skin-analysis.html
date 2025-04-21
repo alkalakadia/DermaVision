@@ -219,6 +219,25 @@ async function predict(imageElement) {
 
 
     </script>
-
+<script>
+    // Get current page URL
+    const currentPage = window.location.pathname.split('/').pop();
+    
+    // Get all navigation links
+    const navLinks = document.querySelectorAll('nav a');
+    
+    // Loop through the links
+    navLinks.forEach(link => {
+        // Get href attribute
+        const href = link.getAttribute('href');
+        
+        // Check if current page matches the href
+        if (href === currentPage || 
+            (currentPage === '' && href === 'index.html')) {
+            // Add active class
+            link.classList.add('active');
+        }
+    });
+</script>
 </body>
 </html>
