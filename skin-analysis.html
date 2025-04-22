@@ -207,6 +207,8 @@ async function predict(imageElement) {
                 context.drawImage(imageElement, 0, 0, imageElement.naturalWidth, imageElement.naturalHeight);
                 const imgURL = canvas.toDataURL();
                 sessionStorage.setItem("userImage", imgURL);
+                sessionStorage.setItem("prediction", condition);
+                sessionStorage.setItem("confidence", confidence);
         }
         if (imageElement.complete) {
             imageElement.onload(); // Manually trigger if the image is already loaded

@@ -24,10 +24,14 @@
         <p>After performing your skin analysis, here are some professional recommendations tailored to your skin condition.</p>
 
         <div id="ai-suggestions">
+            <h4>Model prediction:</h4>
+            <p id="prediction-guidance"></p>
         </div>
         <script>
             window.addEventListener("DOMContentLoaded", () =>{
                 const imgURL = sessionStorage.getItem("userImage");
+                const prediction = sessionStorage.getItem("prediction");
+                const confidence = sessionStorage.getItem("confidence");
                 if(imgURL){
                     const img = new Image();
                     img.src = imgURL;
@@ -37,6 +41,25 @@
                     document.getElementById("ai-suggestions").appendChild(img);
                 } else {
                     document.getElementById("ai-suggestions").textContent = "No image uploaded.";
+                }
+                if(confidence){
+                    const confidenceText = document.createElement("p");
+                    confidenceText.textContent = confidence;
+                    document.getElementById("prediction-guidance").appendChild(confidenceText);
+                } else {
+                    document.getElementById("ai-suggestions").textContent = "No confidence available.";
+                }
+                if(prediction){
+                    const predictionText = document.createElement("p");
+                    predictionText.textContent = prediction;
+                    document.getElementById("prediction-guidance").appendChild(predictionText);
+                    const predictionGuidance = document.createElement("p");
+                    predictionGuidance.textContent = "There are moderate signs of sun damage with 76% confidence." + 
+                    " Recommended guidance includes: using daily sun protection (SPF 30+), keep your skin hydrated, " +
+                    "limit tanning, and maintain a healthy diet rich in skin-friendly nutrients (vitamins A, C, E, omega-3s)."
+                    document.getElementById("prediction-guidance").appendChild(predictionGuidance);
+                } else {
+                    document.getElementById("ai-suggestions").textContent = "No prediction available.";
                 }
             });
         </script>
