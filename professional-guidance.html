@@ -54,7 +54,7 @@
                     predictionText.textContent = prediction;
                     document.getElementById("prediction-guidance").appendChild(predictionText);
                     const predictionGuidance = document.createElement("p");
-                    predictionGuidance.textContent = "There are moderate signs of sun damage with 76% confidence." + 
+                    predictionGuidance.textContent = `There are moderate signs of ${prediction} with ${confidence * 100}% confidence.` + 
                     " Recommended guidance includes: using daily sun protection (SPF 30+), keep your skin hydrated, " +
                     "limit tanning, and maintain a healthy diet rich in skin-friendly nutrients (vitamins A, C, E, omega-3s)."
                     document.getElementById("prediction-guidance").appendChild(predictionGuidance);
