@@ -79,8 +79,8 @@
             // Create an HTMLImageElement (Ensures correct input type)
             const imgElement = new Image();
             imgElement.src = window.URL.createObjectURL(imageFile); // ✅ FIXED
-            imgElement.width = 200;
-            imgElement.height = 200;
+            //imgElement.width = 224;
+            //imgElement.height = 224;
 
             // Append image to the DOM (Display it)
             document.getElementById("webcam-container").innerHTML = ""; // Clear previous images
@@ -125,7 +125,7 @@ async function init() {
     } else {
         // Start the webcam if it's not already running
         const flip = true; // Flip the image for a mirror effect
-        webcam = new tmImage.Webcam(200, 200, flip); // Set webcam dimensions
+        webcam = new tmImage.Webcam(224, 224, flip); // Set webcam dimensions
 
         try {
             await webcam.setup();
