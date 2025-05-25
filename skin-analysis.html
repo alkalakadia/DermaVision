@@ -24,7 +24,7 @@
         <p>Use the webcam or upload an image to analyze your skin.</p>
 
         <!-- Webcam & Image Upload Buttons -->
-        <button type="button" onclick="init()">Start Webcam</button>
+        <button type="button" id="webcam-btn" onclick="init()">Start Webcam</button>
         <input type="file" id="imageUpload" accept="image/*">
         <button type="button" onclick="analyzeImage()">Upload Image</button>
 
@@ -83,6 +83,7 @@
             //imgElement.height = 224;
 
             // Append image to the DOM (Display it)
+            imgElement.style.padding = "1vh";
             imgElement.style.width = "200px";
             imgElement.style.height = "200px";
             document.getElementById("webcam-container").innerHTML = ""; // Clear previous images
@@ -107,23 +108,28 @@
   
         let webcamRunning = false; // Flag to track webcam state
 
+        const button = document.getElementById("webcam-btn");
 
 // Initialize or stop Webcam based on webcamRunning flag
 async function init() {
+    
     if (!model) {
         alert("Please wait, AI model is still loading...");
         return;
     }
 
     if (webcamRunning) {
+        webcam.update();
         // Capture the current frame when webcam is running
         const capturedImage = webcam.canvas; // Capture the frame from the webcam
+        console.log(capturedImage.toDataURL().length);
         await predict(capturedImage); // Predict the condition based on the captured image
 
         // Stop the webcam
         webcam.stop();
         console.log("Webcam stopped.");
         webcamRunning = false; // Set flag to false as webcam is no longer running
+        button.textContent = "Start Webcam";
     } else {
         // Start the webcam if it's not already running
         const flip = true; // Flip the image for a mirror effect
@@ -145,6 +151,10 @@ async function init() {
         labelContainer = document.getElementById("label-container");
 
         webcamRunning = true; // Set flag to true as the webcam is now running
+
+        button.textContent = "Take Image";
+
+
     }
 }
 
@@ -152,6 +162,7 @@ async function init() {
 async function loop() {
     if (webcamRunning) {
         webcam.update();
+        window.requestAnimationFrame(loop);
     }
 }
 
@@ -191,28 +202,37 @@ async function predict(imageElement) {
         document.getElementById("label-container").innerHTML =
             `Detected Condition: <b>${condition}</b> (Confidence: ${confidence})`;
 
-        const buttonToGuidance = document.createElement("button");
-        const text = document.createElement("span");
-        text.textContent = "Professional Guidance";
-        buttonToGuidance.appendChild(text);
-        buttonToGuidance.addEventListener("click", () => {
+        if(!document.getElementById("btn-to-guidance")){
+            const buttonToGuidance = document.createElement("button");
+            buttonToGuidance.id = "btn-to-guidance";
+            const text = document.createElement("span");
+            text.textContent = "Professional Guidance";
+            buttonToGuidance.appendChild(text);
+            buttonToGuidance.addEventListener("click", () => {
             window.location.href = "professional-guidance.html";  // replace with your actual URL
-        });
+            });
 
-        document.getElementById("ai-suggestions").appendChild(buttonToGuidance);
-
-        imageElement.onload = () => {
-                const canvas = document.createElement("canvas");
-                canvas.width = 200;
-                canvas.height = 200;
-                const context = canvas.getContext("2d");
-                //context.drawImage(imageElement, 0, 0, imageElement.naturalWidth, imageElement.naturalHeight);
-                context.drawImage(imageElement, 0, 0, 200, 200);
-                const imgURL = canvas.toDataURL();
-                sessionStorage.setItem("userImage", imgURL);
-                sessionStorage.setItem("prediction", condition);
-                sessionStorage.setItem("confidence", confidence);
+            document.getElementById("ai-suggestions").appendChild(buttonToGuidance);
         }
+        
+
+        let imgURL;
+        if (imageElement instanceof HTMLCanvasElement){
+            imgURL = imageElement.toDataURL();
+            console.log(imgURL.length);
+        } else if (imageElement instanceof HTMLImageElement){
+            const canvas = document.createElement("canvas");
+            canvas.width = 200;
+            canvas.height = 200;
+            const context = canvas.getContext("2d");
+            //context.drawImage(imageElement, 0, 0, imageElement.naturalWidth, imageElement.naturalHeight);
+            context.drawImage(imageElement, 0, 0, 200, 200);
+            imgURL = canvas.toDataURL();
+                
+        }
+        sessionStorage.setItem("userImage", imgURL);
+        sessionStorage.setItem("prediction", condition);
+        sessionStorage.setItem("confidence", confidence);
         if (imageElement.complete) {
             imageElement.onload(); // Manually trigger if the image is already loaded
         }
