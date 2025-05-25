@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Skin Analysis - Derma Vision</title>
+    <title>Skin Analysis - DermaVision</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <header>
-        <img src="Derma Vision.png" alt="Derma Vision Logo" class="logo">
+        <img src="DermaVision.png" alt="DermaVision Logo" class="logo">
         <h1>DermaVision - Skin Analysis</h1>
         <nav>
             <a href="index.html">Home</a>
@@ -83,6 +83,8 @@
             //imgElement.height = 224;
 
             // Append image to the DOM (Display it)
+            imgElement.style.width = "200px";
+            imgElement.style.height = "200px";
             document.getElementById("webcam-container").innerHTML = ""; // Clear previous images
             document.getElementById("webcam-container").appendChild(imgElement);
 
@@ -201,10 +203,11 @@ async function predict(imageElement) {
 
         imageElement.onload = () => {
                 const canvas = document.createElement("canvas");
-                canvas.width = imageElement.naturalWidth;
-                canvas.height = imageElement.naturalHeight;
+                canvas.width = 200;
+                canvas.height = 200;
                 const context = canvas.getContext("2d");
-                context.drawImage(imageElement, 0, 0, imageElement.naturalWidth, imageElement.naturalHeight);
+                //context.drawImage(imageElement, 0, 0, imageElement.naturalWidth, imageElement.naturalHeight);
+                context.drawImage(imageElement, 0, 0, 200, 200);
                 const imgURL = canvas.toDataURL();
                 sessionStorage.setItem("userImage", imgURL);
                 sessionStorage.setItem("prediction", condition);

@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Professional Guidance - Derma Vision</title>
+    <title>Professional Guidance - DermaVision</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <header>
-        <img src="Derma Vision.png" alt="Derma Vision Logo" class="logo">
+        <img src="DermaVision.png" alt="DermaVision Logo" class="logo">
         <h1>Professional Skincare Guidance</h1>
         <nav>
             <a href="index.html">Home</a>
@@ -32,12 +32,17 @@
                 const imgURL = sessionStorage.getItem("userImage");
                 const prediction = sessionStorage.getItem("prediction");
                 const confidence = sessionStorage.getItem("confidence");
+
+                sessionStorage.removeItem("userImage");
+                sessionStorage.removeItem("prediction");
+                sessionStorage.removeItem("confidence");
+                
                 if(imgURL){
                     const img = new Image();
                     img.src = imgURL;
                     img.width = 200;
                     img.height = 200;
-  
+                    
                     document.getElementById("ai-suggestions").appendChild(img);
                 } else {
                     document.getElementById("ai-suggestions").textContent = "No image uploaded.";
@@ -66,7 +71,7 @@
     </section>
 
     <footer>
-        <p>&copy; 2025 Derma Vision. All Rights Reserved.</p>
+        <p>&copy; 2025 DermaVision. All Rights Reserved.</p>
     </footer>
     <script>
         // Get current page URL
