@@ -99,6 +99,24 @@ ul {
     margin-bottom: 20px;
 }
 
+#buttons{
+    display: flex;
+    align-items: center;
+}
+
+#upload{
+    display: flex;
+    flex-direction: column;
+    padding-left: 2rem;
+    padding-top: 1rem;
+    gap: 0.5rem;
+}
+
+#upload button{
+    align-self: flex-start;
+    width: auto;
+}
+
 /* Button */
 button {
     background-color: #3b82f6; /* primary blue */

@@ -24,10 +24,14 @@
         <p>Use the webcam or upload an image to analyze your skin.</p>
 
         <!-- Webcam & Image Upload Buttons -->
-        <button type="button" id="webcam-btn" onclick="init()">Start Webcam</button>
-        <input type="file" id="imageUpload" accept="image/*">
-        <button type="button" onclick="analyzeImage()">Upload Image</button>
-
+        <div id="buttons">
+            <button type="button" id="webcam-btn" onclick="init()">Start Webcam</button>
+            <div id="upload">
+                <input type="file" id="imageUpload" accept="image/*">
+                <button type="button" onclick="analyzeImage()">Upload Image</button>
+             </div>
+        </div>
+        
         <!-- Display Webcam or Uploaded Image -->
         <div id="webcam-container"></div>
 
