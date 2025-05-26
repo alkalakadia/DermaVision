@@ -87,9 +87,12 @@
             //imgElement.height = 224;
 
             // Append image to the DOM (Display it)
+            //imgElement.style.padding = "1vh";
+            //imgElement.style.width = "200px";
+            //imgElement.style.height = "200px";
+            imgElement.style.maxWidth = "200px"; // Limits width for display
+            imgElement.style.height = "auto";    // Preserves aspect ratio
             imgElement.style.padding = "1vh";
-            imgElement.style.width = "200px";
-            imgElement.style.height = "200px";
             document.getElementById("webcam-container").innerHTML = ""; // Clear previous images
             document.getElementById("webcam-container").appendChild(imgElement);
 
@@ -170,8 +173,12 @@ async function loop() {
     }
 }
 
+let isPredicting = false;
 // Predict Skin Condition
 async function predict(imageElement) {
+    //if(isPredicting) return;
+    //isPredicting = true;
+
     console.log("⚡ Making prediction...");
 
     if (!model) {
@@ -187,6 +194,10 @@ async function predict(imageElement) {
     }
 
     try {
+        document.getElementById("label-container").innerHTML = "";
+        const existingButton = document.getElementById("btn-to-guidance");
+        if (existingButton) existingButton.remove();
+
         console.log("🚀 Sending image to model...");
         const prediction = await model.predict(imageElement); // Model Prediction
 
@@ -237,9 +248,11 @@ async function predict(imageElement) {
         sessionStorage.setItem("userImage", imgURL);
         sessionStorage.setItem("prediction", condition);
         sessionStorage.setItem("confidence", confidence);
+        /*
         if (imageElement.complete) {
             imageElement.onload(); // Manually trigger if the image is already loaded
         }
+            */
 
     } catch (error) {
         console.error("❌ Prediction Error:", error);
