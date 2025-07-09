@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DermaVision - Skin Analyzer</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <img src="DermaVision.png" alt="DermaVision Logo" class="logo">
+        <h1>Welcome to DermaVision</h1>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="how-it-works.html">How It Works</a>
+            <a href="skin-analysis.html">Skin Analysis</a>
+            <a href="professional-guidance.html">Professional Guidance</a>
+            <a href="about-us.html">About Us</a>
+            <a href="your-record.html">Your Record</a>
+        </nav>
+    </header>
+
+    <section class="main-content">
+        <h2>Our Mission</h2>
+        <p>At <b>DermaVision</b>, we use AI to give you insights about your skin condition. Our goal is to help you achieve healthier, radiant skin by analyzing skin conditions with advanced technology.</p>
+
+        <h3>Our Goal</h3>
+        <p>We want to empower you to take better care of your skin, with personalized advice based on real-time AI-powered skin analysis.</p>
+
+        <h3>How It Works</h3>
+        <p>Upload or take a picture of your skin, and our AI-powered system will analyze it and provide you with professional skincare advice.</p>
+
+        
+
+        <button onclick="window.location.href='skin-analysis.html'">Start Skin Analysis</button>
+    </section>
+
+    <footer>
+        <p>&copy; 2025 DermaVision. All Rights Reserved.</p>
+    </footer>
+    <script>
+        // Get current page URL
+        const currentPage = window.location.pathname.split('/').pop();
+        
+        // Get all navigation links
+        const navLinks = document.querySelectorAll('nav a');
+        
+        // Loop through the links
+        navLinks.forEach(link => {
+            // Get href attribute
+            const href = link.getAttribute('href');
+            
+            // Check if current page matches the href
+            if (href === currentPage || 
+                (currentPage === '' && href === 'index.html')) {
+                // Add active class
+                link.classList.add('active');
+            }
+        });
+    </script>
+</body>
+</html>

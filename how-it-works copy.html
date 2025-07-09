@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How It Works - DermaVision</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <img src="DermaVision.png" alt="DermaVision Logo" class="logo">
+        <h1>How DermaVision Works</h1>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="how-it-works.html">How It Works</a>
+            <a href="skin-analysis.html">Skin Analysis</a>
+            <a href="professional-guidance.html">Professional Guidance</a>
+            <a href="about-us.html">About Us</a>
+            <a href="your-record.html">Your Record</a>
+        </nav>
+    </header>
+
+    <section class="main-content">
+        <h2>Technology Overview</h2>
+        <p>We use TensorFlow and Teachable Machine to provide precise skin analysis. The model is trained with thousands of skin condition images to ensure accuracy.</p>
+        
+        <h3>Step-by-Step Process</h3>
+        <ul>
+            <li><b>Step 1:</b> Upload or take a photo of your skin.</li>
+            <li><b>Step 2:</b> Our AI model analyzes the image and identifies skin conditions.</li>
+            <li><b>Step 3:</b> You receive personalized skincare advice based on the analysis.</li>
+        </ul>
+
+        <h3>How the Model is Trained</h3>
+        <p>Our model is trained on a diverse dataset of skin conditions to ensure accuracy in predicting acne, wrinkles, and other skin issues.</p>
+
+        <button onclick="window.location.href='skin-analysis.html'">Start Skin Analysis</button>
+    </section>
+
+    <footer>
+        <p>&copy; 2025 DermaVision. All Rights Reserved.</p>
+    </footer>
+
+    <!-- JavaScript for active page highlighting -->
+    <script>
+        // Get current page URL
+        const currentPage = window.location.pathname.split('/').pop();
+        
+        // Get all navigation links
+        const navLinks = document.querySelectorAll('nav a');
+        
+        // Loop through the links
+        navLinks.forEach(link => {
+            // Get href attribute
+            const href = link.getAttribute('href');
+            
+            // Check if current page matches the href
+            if (href === currentPage || 
+                (currentPage === '' && href === 'index.html')) {
+                // Add active class
+                link.classList.add('active');
+            }
+        });
+    </script>
+</body>
+</html>

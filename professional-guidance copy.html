@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional Guidance - DermaVision</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Firebase App (core) -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <!-- Firebase Auth -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+    <!-- Firebase Firestore (if needed) -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+    <!-- Firebase Storage (if needed) -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics-compat.js"></script>
+</head>
+<body>
+    <header>
+        <img src="DermaVision.png" alt="DermaVision Logo" class="logo">
+        <h1>Professional Skincare Guidance</h1>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="how-it-works.html">How It Works</a>
+            <a href="skin-analysis.html">Skin Analysis</a>
+            <a href="professional-guidance.html">Professional Guidance</a>
+            <a href="about-us.html">About Us</a>
+        </nav>
+    </header>
+
+    <section class="main-content">
+        <h2>Your Personalized Skincare Tips</h2>
+        <p>After performing your skin analysis, here are some professional recommendations tailored to your skin condition.</p>
+
+        <div id="ai-suggestions">
+            <h4>Model prediction:</h4>
+            <p id="prediction-guidance"></p>
+            <div id="gemini-section" style="margin-top: 30px; padding: 20px; background-color: #f8f9fa; border-radius: 10px; border-left: 4px solid #007bff; display:none;">
+                <h4>Your Personalized Care Plan</h4>
+                <div id="gemini-loading" style="display: none;">
+                    <p>Generating personalized care plan...</p>
+                    <div style="width: 20px; height: 20px; border: 2px solid #007bff; border-top: 2px solid transparent; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+                </div>
+                <div id="gemini-care-plan"></div>
+            </div>
+        </div>
+        <style>
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+        </style>
+        <script>
+            async function getGeminiCarePlan(prediction, confidence) {
+                try {
+                    const response = await fetch('/api/gemini-recommendations', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ skinCondition: prediction, confidence })
+                    });
+                    if (!response.ok) throw new Error('Failed to fetch care plan');
+                    const data = await response.json();
+                    return data.recommendations;
+                } catch (err) {
+                    return 'Unable to generate AI care plan at this time.';
+                }
+            }
+            window.addEventListener("DOMContentLoaded", async () =>{
+                const imgURL = sessionStorage.getItem("userImage");
+                const prediction = sessionStorage.getItem("prediction");
+                const confidence = sessionStorage.getItem("confidence");
+
+                sessionStorage.removeItem("userImage");
+                sessionStorage.removeItem("prediction");
+                sessionStorage.removeItem("confidence");
+
+                if(imgURL){
+                    const img = new Image();
+                    img.src = imgURL;
+                    img.width = 200;
+                    img.height = 200;
+                    document.getElementById("ai-suggestions").appendChild(img);
+                } else {
+                    document.getElementById("ai-suggestions").textContent = "No image uploaded.";
+                }
+                if(confidence){
+                    const confidenceText = document.createElement("p");
+                    confidenceText.textContent = `Confidence: ${(confidence * 100).toFixed(1)}%`;
+                    document.getElementById("prediction-guidance").appendChild(confidenceText);
+                } else {
+                    document.getElementById("ai-suggestions").textContent = "No confidence available.";
+                }
+                if(prediction){
+                    const predictionText = document.createElement("p");
+                    predictionText.textContent = `Detected condition: ${prediction}`;
+                    document.getElementById("prediction-guidance").appendChild(predictionText);
+                    // Removed static placeholder guidance text. Only Gemini care plan will be shown below.
+
+                    // Show Gemini section and loading
+                    const geminiSection = document.getElementById("gemini-section");
+                    const geminiLoading = document.getElementById("gemini-loading");
+                    const geminiCarePlan = document.getElementById("gemini-care-plan");
+                    geminiSection.style.display = "block";
+                    geminiLoading.style.display = "block";
+                    geminiCarePlan.innerHTML = "";
+                    // Fetch Gemini care plan
+                    const carePlan = await getGeminiCarePlan(prediction, confidence);
+                    geminiLoading.style.display = "none";
+                    geminiCarePlan.innerHTML = carePlan.replace(/\n/g, '<br>');
+
+                    document.getElementById("ai-suggestions").appendChild(document.createElement("br"));
+                    const backButton = document.createElement("button");
+                    backButton.textContent = "Perform another analysis";
+                    backButton.addEventListener("click", () => {
+                        window.location.href = "skin-analysis.html";
+                    });
+                    document.getElementById("ai-suggestions").appendChild(backButton);
+
+                    // Add 'Next Steps: Save & Track This Analysis' button
+                    const saveTrackButton = document.createElement("button");
+                    saveTrackButton.textContent = "Next Steps: Save & Track This Analysis";
+                    saveTrackButton.style.marginLeft = "1em";
+                    saveTrackButton.onclick = () => {
+                        handlePostCarePlan(imgURL, prediction, confidence, carePlan);
+                    };
+                    document.getElementById("ai-suggestions").appendChild(saveTrackButton);
+                } else {
+                    document.getElementById("ai-suggestions").textContent = "No prediction available.";
+                }
+            });
+
+            // Consent dialog
+            function showConsentDialog(onConsent) {
+                const dialog = document.createElement('div');
+                dialog.style.position = 'fixed';
+                dialog.style.top = '0';
+                dialog.style.left = '0';
+                dialog.style.width = '100vw';
+                dialog.style.height = '100vh';
+                dialog.style.background = 'rgba(0,0,0,0.5)';
+                dialog.style.display = 'flex';
+                dialog.style.alignItems = 'center';
+                dialog.style.justifyContent = 'center';
+                dialog.innerHTML = `
+                  <div style="background:#fff;padding:2em;border-radius:10px;max-width:350px;text-align:center;">
+                    <h3>Save Analysis?</h3>
+                    <p>Would you like to save this analysis in your DermaVision profile?</p>
+                    <button id="consent-yes">Yes, save</button>
+                    <button id="consent-no">No, skip</button>
+                  </div>
+                `;
+                document.body.appendChild(dialog);
+                dialog.querySelector('#consent-yes').onclick = () => { document.body.removeChild(dialog); onConsent(true); };
+                dialog.querySelector('#consent-no').onclick = () => { document.body.removeChild(dialog); onConsent(false); };
+            }
+
+            // Show post-analysis tracking form
+            function showTrackingForm({ uid, entryId, imageURL }) {
+                const dialog = document.createElement('div');
+                dialog.style.position = 'fixed';
+                dialog.style.top = '0';
+                dialog.style.left = '0';
+                dialog.style.width = '100vw';
+                dialog.style.height = '100vh';
+                dialog.style.background = 'rgba(0,0,0,0.5)';
+                dialog.style.display = 'flex';
+                dialog.style.alignItems = 'center';
+                dialog.style.justifyContent = 'center';
+                dialog.innerHTML = `
+                  <div style="background:#fff;padding:2em;border-radius:10px;max-width:400px;text-align:left;">
+                    <h3>Track Your Experience</h3>
+                    <img src="${imageURL}" alt="Your skin" style="max-width:100%;border-radius:8px;margin-bottom:1em;"/>
+                    <label>Describe your symptoms in your own words:<br><textarea id="track-symptoms" rows="2" style="width:100%"></textarea></label><br>
+                    <label>Which steps from the advice will you follow?<br><textarea id="track-steps" rows="2" style="width:100%"></textarea></label><br>
+                    <label>Any products or treatments you're using?<br><textarea id="track-products" rows="2" style="width:100%"></textarea></label><br>
+                    <label>Date for next analysis:<br><input type="date" id="track-nextdate" style="width:100%"></label><br>
+                    <label>How do you feel about your skin today? (1–5):<br><input type="range" min="1" max="5" value="3" id="track-feeling" style="width:100%"></label><br>
+                    <button id="track-save">Save Tracker</button>
+                    <button id="track-cancel">Cancel</button>
+                  </div>
+                `;
+                document.body.appendChild(dialog);
+                dialog.querySelector('#track-save').onclick = async () => {
+                    const symptoms = dialog.querySelector('#track-symptoms').value;
+                    const steps = dialog.querySelector('#track-steps').value;
+                    const products = dialog.querySelector('#track-products').value;
+                    const nextDate = dialog.querySelector('#track-nextdate').value;
+                    const feeling = dialog.querySelector('#track-feeling').value;
+                    await firebase.firestore().doc(`users/${uid}/trackers/${entryId}`).set({
+                        symptoms,
+                        stepsToFollow: steps,
+                        products,
+                        nextAnalysisDate: nextDate,
+                        skinFeeling: feeling,
+                        imageURL,
+                        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    alert('Tracker saved!');
+                    document.body.removeChild(dialog);
+                };
+                dialog.querySelector('#track-cancel').onclick = () => {
+                    document.body.removeChild(dialog);
+                };
+            }
+
+            // Save analysis to Firestore/Storage
+            async function saveAnalysis({ uid, imgURL, prediction, confidence, geminiAdvice }) {
+                const entryId = Date.now().toString();
+                try {
+                    // 1. Upload image to Storage
+                    const imageRef = firebase.storage().ref(`users/${uid}/analyses/${entryId}.jpg`);
+                    await imageRef.putString(imgURL, 'data_url');
+                    const imageURL = await imageRef.getDownloadURL();
+                    // 2. Save analysis to Firestore
+                    await firebase.firestore().doc(`users/${uid}/analyses/${entryId}`).set({
+                        imageURL,
+                        prediction,
+                        confidence,
+                        geminiAdvice,
+                        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    // 3. Show tracking form
+                    showTrackingForm({ uid, entryId, imageURL });
+                } catch (err) {
+                    console.error('Error saving analysis or showing tracking form:', err);
+                    alert('There was an error saving your analysis. Please try again.');
+                }
+            }
+
+            // Patch into care plan display logic
+            async function handlePostCarePlan(imgURL, prediction, confidence, geminiAdvice) {
+                showConsentDialog(async (consented) => {
+                    if (consented) {
+                        await saveAnalysis({ uid: 'currentUser', imgURL, prediction, confidence, geminiAdvice });
+                        alert('Analysis saved to your profile!');
+                    }
+                });
+            }
+        </script>
+    </section>
+
+    <footer>
+        <p>&copy; 2025 DermaVision. All Rights Reserved.</p>
+    </footer>
+    <script>
+        // Get current page URL
+        const currentPage = window.location.pathname.split('/').pop();
+        
+        // Get all navigation links
+        const navLinks = document.querySelectorAll('nav a');
+        
+        // Loop through the links
+        navLinks.forEach(link => {
+            // Get href attribute
+            const href = link.getAttribute('href');
+            
+            // Check if current page matches the href
+            if (href === currentPage || 
+                (currentPage === '' && href === 'index.html')) {
+                // Add active class
+                link.classList.add('active');
+            }
+        });
+    </script>
+</body>
+</html>
+
